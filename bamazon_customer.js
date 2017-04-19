@@ -104,12 +104,26 @@ var buyProducts = function() {
     {
       type: 'input',
       name: 'id',
-      message: 'Please enter the ID of the product you\'d would like to buy:'
+      message: 'Please enter the ID of the product you\'d would like to buy:',
+      validate: function(value) {
+        if(isNaN(value) === false) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     },
     {
       type: 'input',
       name: 'number',
-      message: 'How many would you like to buy?'
+      message: 'How many would you like to buy?',
+      validate: function(value) {
+        if(isNaN(value) === false) {
+          return true;
+        } else {
+          return false;
+        }
+      }
     }
   ]).then(function(answers) {
     console.log('Item ID:', answers.id, 'Item Amount:', answers.number);
