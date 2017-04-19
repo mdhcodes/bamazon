@@ -1,4 +1,6 @@
+// Include npm package 'mysql' to create and manipulate SQL databases.
 var mysql = require('mysql');
+
 
 // Create a mysql connection to the bamazon_db database.
 var connection = mysql.createConnection({
@@ -9,33 +11,147 @@ var connection = mysql.createConnection({
   database: 'bamazon_db'
 });
 
+
 // Establish a connection to the bamazon_db database.
 connection.connect(function(error) {
   if(error) throw error;
-  // console.log('Connection ID:', connection.threadID); // undefined?
+  // console.log('Connection ID:', connection.threadID); // undefined???
+  displayProducts();
 });
 
 
-// Upon running this application, the items for sale will be displayed.
-var displayProducts = function() {
+// Function to display the table with all the products for sale.
+var displayTable = function() {
+  // Include the npm package 'cli-table' to create a custom command line table.
+  var Table = require('cli-table');
+  // Instantiate - create a new instance of the table object.
+  var table = new Table({
+    head: ['ID', 'Product Name', 'Department', 'Price', 'Stock Quantity'],
+    colWidths: [5, 30, 20, 20, 20]
+  });
+  // Establish a connection to the database to access stored information and populate the table.
   connection.query('SELECT * FROM `products`', function(error, results) {
     if(error) throw error;
     //console.log('Products', results);
-
-    console.log('----- ITEMS FOR SALE -----');
+    // The table is an array so all array methods apply.
     for(var i = 0; i < results.length; i++) {
-      console.log('Product ID:', results[i].item_id);
-      console.log('Product Name:', results[i].product_name);
-      console.log('Department:', results[i].department_name);
-      console.log('Price: $' + results[i].price);
-      console.log('--------------------------');
+      table.push(
+          [results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity]
+      );
     }
+    // Print the table.
+    console.log(table.toString());
+  }); // end connection.query()
+}; // end displayTable()
+
+
+// Function to display the items for sale and execute start().
+var displayProducts = function() {
+  // Display the table title.
+  console.log('ITEMS FOR SALE');
+  // Include the npm package 'cli-table' to create a custom command line table.
+  var Table = require('cli-table');
+  // Instantiate - create a new instance of the table object.
+  var table = new Table({
+    head: ['ID', 'Product Name', 'Department', 'Price', 'Stock Quantity'], //ids, names, and prices
+    colWidths: [5, 30, 20, 20, 20]
   });
-};
+  // Establish a connection to the database to access stored information and populate the table.
+  connection.query('SELECT * FROM `products`', function(error, results) {
+    if(error) throw error;
+    //console.log('Products', results);
+    // The table is an array so all array methods apply.
+    for(var i = 0; i < results.length; i++) {
+      table.push(
+          [results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity]
+      );
+    }
+    // Print the table.
+    console.log(table.toString());
+    // Execute the start() function.
+    start();
+  }); // end connection.query()
+}; // end displayProducts()
 
-displayProducts();
+
+// Function to start the customer interaction and ask them if they'd like to buy an item for sale.
+var start = function() {
+  // Include the npm package 'inquirer' and ask the user a series of questions.
+  var inquirer = require('inquirer');
+  inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'confirmBuy',
+      message: 'Would you like to purchase any of these items?'
+    }
+  ]).then(function(answers) {
+    if(answers.confirmBuy) {
+      // If the customer would like to buy something, execute buyProducts().
+      buyProducts();
+    } else {
+      // If the customer doesn't want to buy anything, display a friendly message.
+      console.log('Have a great day!');
+    }
+  }); // end then() Promise
+}; // end start()
 
 
-connection.end(function() {
-  console.log('The connection ended.');
-});
+// Function to prompt users with two messages when they choose to make a purchase.
+var buyProducts = function() {
+  // Include the npm package 'inquirer' and ask the user a series of questions.
+  var inquirer = require('inquirer');
+  inquirer.prompt([
+    {
+      type: 'input',
+      name: 'id',
+      message: 'Please enter the ID of the product you\'d would like to buy:'
+    },
+    {
+      type: 'input',
+      name: 'number',
+      message: 'How many would you like to buy?'
+    }
+  ]).then(function(answers) {
+    console.log('Item ID:', answers.id, 'Item Amount:', answers.number);
+    // Establish a connection to the database to access stored information.
+    var query = "SELECT price, stock_quantity FROM `products` WHERE item_id=" + answers.id;
+    connection.query(query, function(error, results) {
+      if(error) throw error;
+      //console.log('Current Inventory:', results[0].stock_quantity);
+      var itemId = answers.id;
+      //console.log('Results', results);
+      var itemInventory = results[0].stock_quantity;
+      console.log('Item Inventory:', results[0].stock_quantity);
+      var itemAmount = answers.number;
+      //console.log('Item Amount (variable):', answers.number);
+      var itemPrice = results[0].price;
+      var totalPrice = parseFloat(itemPrice) * parseFloat(itemAmount);
+      // Check if the store has enough items to meet the customer's request.
+      if(itemInventory >= itemAmount) {
+        // Fulfill the customer's order and show the customer the total cost of their purchase.
+        console.log('We\'d be happy to fill your order! The total price is $' + totalPrice + '.');
+        // Update the SQL database to reflect the remaining quantity.
+        updateStock(itemId, itemInventory, itemAmount);
+        console.log('Thank you for your purchase!');
+      } else {
+        // Prevent the order from going through and explain to the customer why we can't place their order.
+        console.log('Insufficient quantity! We\'re unable to fill your order at this time.');
+        console.log('We have only ' + itemInventory + 'itmes in stock.');
+        // Execute displayTable()
+        displayTable();
+      }
+    }); // end connection.query()
+  }); // end then() Promise
+}; // end buyProducts()
+
+
+// Function to update the stock_quantity when a purchase is successfully completed.
+var updateStock = function(itemId, inventory, purchaseAmount) {
+  // Build query to decrease the number of items in stock after a purchase.
+  var query = "UPDATE `products` SET stock_quantity=" + (inventory -= purchaseAmount) + " WHERE item_id=" + itemId;
+  connection.query(query, function(error, results) {
+    if(error) throw error;
+    // Execute displayTable() to display the updated information.
+    displayTable();
+  }); // end connection.query()
+}; // end updateStock()
