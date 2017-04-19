@@ -136,7 +136,7 @@ var buyProducts = function() {
       } else {
         // Prevent the order from going through and explain to the customer why we can't place their order.
         console.log('Insufficient quantity! We\'re unable to fill your order at this time.');
-        console.log('We have only ' + itemInventory + 'itmes in stock.');
+        console.log('We have only ' + itemInventory + ' items in stock.');
         // Execute displayTable()
         displayTable();
       }
