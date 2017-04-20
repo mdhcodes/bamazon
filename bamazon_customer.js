@@ -15,7 +15,7 @@ var connection = mysql.createConnection({
 // Establish a connection to the bamazon_db database.
 connection.connect(function(error) {
   if(error) throw error;
-  // console.log('Connection ID:', connection.threadID); // undefined???
+  console.log('Connection ID:', connection.threadId);
   displayProducts();
 });
 
