@@ -7,7 +7,7 @@ Bamazon is an Amazon-like storefront created with Node.js and MySQL. The applica
 
 ### Customer View
 
-[Click here to see the Customer View in action](/video/bamazon_customer.webm).
+[Click here to see the Customer View in action](/video/customer_view.webm).
 
 This application includes a MySQL database named `bamazon_db` and a table named `products`.
 
@@ -29,9 +29,12 @@ The 'Customer View' Node application is called `bamazon_customer.js`. Running th
              * We'd be happy to fill your order! The total price is $ + (price * number of items the customer would like to   buy).
              * Update the SQL database to reflect the remaining quantity (stock_quantity - number of items purchased).
              * Display the table with the change / update.
-             * Thank you for your purchase!
+             * Ask the customer if they'd like to continue shopping.
+                * If true, execute function continueShopping().
+                * If false, display message 'Thank you for your purchase.'
           * If false (stock_quantity < number of items the customer would like to buy), display message.
             * Insufficient quantity! We're unable to fill your order at this time.
             * We have only + stock_quantity + items in stock.
             * Display the table with no change / update.
+            * Execute function continueShopping().
     * If false (they don't want to make a purchase), the user will see this message, 'Have a great day!'
