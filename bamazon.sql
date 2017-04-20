@@ -12,9 +12,6 @@ CREATE TABLE `products` (
   PRIMARY KEY (id)
 );
 
-SELECT * FROM `products`;
-
-
 INSERT INTO `products` (`product_name`, `department_name`, `price`, `stock_quantity`)
 VALUES('To Kill a Mockingbird',	'Books', 19, 144);
 
