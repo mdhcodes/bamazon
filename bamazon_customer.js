@@ -94,6 +94,7 @@ var buyProducts = function() {
           return true;
         } else {
           return false;
+          console.log('Please enter a number.');
         }
       }
     },
@@ -106,6 +107,7 @@ var buyProducts = function() {
           return true;
         } else {
           return false;
+          console.log('Please enter a number.');
         }
       }
     }

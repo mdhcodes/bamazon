@@ -7,7 +7,7 @@ Bamazon is an Amazon-like storefront created with Node.js and MySQL. The applica
 
 ### Customer View
 
-[Click here to see the Customer View in action](/video/customer_view.webm).
+[Click here to see the Customer View in action](/video/bamazon_customer.webm).
 
 This application includes a MySQL database named `bamazon_db` and a table named `products`.
 
