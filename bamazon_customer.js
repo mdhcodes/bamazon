@@ -24,9 +24,11 @@ connection.connect(function(error) {
 var displayTable = function() {
   // Include the npm package 'cli-table' to create a custom command line table.
   var Table = require('cli-table');
+  // Include the npm package 'colors' to customize command line cli-tables.
+  var colors = require('colors');
   // Instantiate - create a new instance of the table object.
   var table = new Table({
-    head: ['ID', 'Product Name', 'Department', 'Price', 'Stock Quantity'],
+    head: ['ID'.cyan, 'Product Name'.cyan, 'Department'.cyan, 'Price'.cyan, 'Stock Quantity'.cyan],
     colWidths: [5, 30, 20, 20, 20]
   });
   // Establish a connection to the database to access stored information and populate the table.
@@ -40,7 +42,7 @@ var displayTable = function() {
       );
     }
     // Print the table.
-    console.log(table.toString());
+    console.log('\n' + table.toString());
   }); // end connection.query()
 }; // end displayTable()
 
@@ -49,28 +51,10 @@ var displayTable = function() {
 var displayProducts = function() {
   // Display the table title.
   console.log('ITEMS FOR SALE');
-  // Include the npm package 'cli-table' to create a custom command line table.
-  var Table = require('cli-table');
-  // Instantiate - create a new instance of the table object.
-  var table = new Table({
-    head: ['ID', 'Product Name', 'Department', 'Price', 'Stock Quantity'], //ids, names, and prices
-    colWidths: [5, 30, 20, 20, 20]
-  });
-  // Establish a connection to the database to access stored information and populate the table.
-  connection.query('SELECT * FROM `products`', function(error, results) {
-    if(error) throw error;
-    //console.log('Products', results);
-    // The table is an array so all array methods apply.
-    for(var i = 0; i < results.length; i++) {
-      table.push(
-          [results[i].item_id, results[i].product_name, results[i].department_name, results[i].price, results[i].stock_quantity]
-      );
-    }
-    // Print the table.
-    console.log(table.toString());
+  // Execute displayTable() and show all the items for sale.
+  displayTable();
     // Execute the start() function.
     start();
-  }); // end connection.query()
 }; // end displayProducts()
 
 
@@ -104,7 +88,7 @@ var buyProducts = function() {
     {
       type: 'input',
       name: 'id',
-      message: 'Please enter the ID of the product you\'d would like to buy:',
+      message: 'Please enter the ID of the product you\'d like to buy:',
       validate: function(value) {
         if(isNaN(value) === false) {
           return true;
@@ -146,13 +130,16 @@ var buyProducts = function() {
         console.log('We\'d be happy to fill your order! The total price is $' + totalPrice + '.');
         // Update the SQL database to reflect the remaining quantity.
         updateStock(itemId, itemInventory, itemAmount);
-        console.log('Thank you for your purchase!');
+        // Execute continueShopping()
+        continueShopping();
       } else {
         // Prevent the order from going through and explain to the customer why we can't place their order.
         console.log('Insufficient quantity! We\'re unable to fill your order at this time.');
         console.log('We have only ' + itemInventory + ' items in stock.');
         // Execute displayTable()
         displayTable();
+        // Execute continueShopping()
+        continueShopping();
       }
     }); // end connection.query()
   }); // end then() Promise
@@ -169,3 +156,23 @@ var updateStock = function(itemId, inventory, purchaseAmount) {
     displayTable();
   }); // end connection.query()
 }; // end updateStock()
+
+
+// Function to ask the customer if they'd like to continue shopping.
+var continueShopping = function() {
+  // Include the npm package 'inquirer' and ask the user a series of questions.
+  var inquirer = require('inquirer');
+  inquirer.prompt([
+    {
+      type: 'confirm',
+      name: 'buyMore',
+      message: 'Would you like to continue shopping?'
+    }
+  ]).then(function(answers) {
+    if(answers.buyMore) {
+      buyProducts();
+    } else {
+      console.log('Thank you for your purchase!');
+    }
+  });
+};
