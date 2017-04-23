@@ -38,3 +38,16 @@ The 'Customer View' Node application is called `bamazon_customer.js`. Running th
             * Display the table with no change / update.
             * Execute function continueShopping().
     * If false (they don't want to make a purchase), the user will see this message, 'Have a great day!'
+
+
+    ### Manager View
+
+    [Click here to see the Manager View in action](/video/manager_view.webm).
+
+    The 'Manager View' Node application is called `bamazon_manager.js`. Running this application will prompt the manager to choose the action they'd like to take.
+
+    * If a manager selects View Products for Sale, a table with a list of all the items for sale will be displayed.
+    * If a manager selects View Low Inventory, a list of all items with an inventory count lower than five will be displayed.
+    * If a manager selects Add to Inventory, the manager will be prompted to add more to any item currently in the store.
+    * If a manager selects Add New Product, the manager will be prompted to add a new product to the store.
+

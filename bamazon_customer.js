@@ -1,7 +1,6 @@
 // Include npm package 'mysql' to create and manipulate SQL databases.
 var mysql = require('mysql');
 
-
 // Create a mysql connection to the bamazon_db database.
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -42,6 +41,7 @@ var displayTable = function() {
       );
     }
     // Print the table.
+    //console.log(results);
     console.log('\n' + table.toString());
   }); // end connection.query()
 }; // end displayTable()
@@ -93,8 +93,8 @@ var buyProducts = function() {
         if(isNaN(value) === false) {
           return true;
         } else {
+          console.log(' Please enter a number.'.red);
           return false;
-          console.log('Please enter a number.');
         }
       }
     },
@@ -106,8 +106,8 @@ var buyProducts = function() {
         if(isNaN(value) === false) {
           return true;
         } else {
+          console.log(' Please enter a number.'.red);
           return false;
-          console.log('Please enter a number.');
         }
       }
     }
@@ -132,15 +132,12 @@ var buyProducts = function() {
         console.log('We\'d be happy to fill your order! The total price is $' + totalPrice + '.');
         // Update the SQL database to reflect the remaining quantity.
         updateStock(itemId, itemInventory, itemAmount);
-        // Execute continueShopping()
         continueShopping();
       } else {
         // Prevent the order from going through and explain to the customer why we can't place their order.
         console.log('Insufficient quantity! We\'re unable to fill your order at this time.');
         console.log('We have only ' + itemInventory + ' items in stock.');
-        // Execute displayTable()
         displayTable();
-        // Execute continueShopping()
         continueShopping();
       }
     }); // end connection.query()
