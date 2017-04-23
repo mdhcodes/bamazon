@@ -1,6 +1,9 @@
 // Include npm package 'mysql' to create and manipulate SQL databases.
 var mysql = require('mysql');
 
+// Include the npm package 'colors' to customize command line text.
+var colors = require('colors');
+
 // Create a mysql connection to the bamazon_db database.
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -78,10 +81,6 @@ var displayTable = function() {
 
 // Function to display the table with all the products for sale including the IDs, names, departments, prices, and quantities.
 var displayAllProducts = function() {
-  // Include the npm package 'cli-table' to create a custom command line table.
-  var Table = require('cli-table');
-  // Include the npm package 'colors' to customize command line cli-tables.
-  var colors = require('colors');
   console.log('ITEMS FOR SALE');
   displayTable();
   selectAnotherOption();
@@ -128,7 +127,7 @@ var addToInventory = function() {
         if(isNaN(value) === false) {
           return true;
         } else {
-          console.log('Please enter a number.'.red);
+          console.log(' Please enter a number.'.red);
           return false;
         }
       }
@@ -141,7 +140,7 @@ var addToInventory = function() {
         if(isNaN(value) === false) {
           return true;
         } else {
-          console.log('Please enter a number.'.red);
+          console.log(' Please enter a number.'.red);
           return false;
         }
       }
@@ -196,7 +195,7 @@ var addNewProduct = function() {
         if(isNaN(value) === false) {
           return true;
         } else {
-          console.log('Please enter a number.'.red);
+          console.log(' Please enter a number.'.red);
           return false;
         }
       }
@@ -209,7 +208,7 @@ var addNewProduct = function() {
         if(isNaN(value) === false) {
           return true;
         } else {
-          console.log('Please enter a number.'.red);
+          console.log(' Please enter a number.'.red);
           return false;
         }
       }
@@ -222,8 +221,8 @@ var addNewProduct = function() {
     connection.query(query, function(error, results) {
       if(error) throw error;
       //console.log(results);
-      selectAnotherOption();
       displayTable();
+      selectAnotherOption();
     });
   });
 };
@@ -244,6 +243,7 @@ var selectAnotherOption = function() {
       managerOptions();
     } else {
       console.log('Thank you for your time!');
+      connection.end();
     }
   });
 };

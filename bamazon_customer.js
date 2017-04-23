@@ -1,6 +1,9 @@
 // Include npm package 'mysql' to create and manipulate SQL databases.
 var mysql = require('mysql');
 
+// Include the npm package 'colors' to customize command line text.
+var colors = require('colors');
+
 // Create a mysql connection to the bamazon_db database.
 var connection = mysql.createConnection({
   host: 'localhost',
@@ -75,6 +78,7 @@ var start = function() {
     } else {
       // If the customer doesn't want to buy anything, display a friendly message.
       console.log('Have a great day!');
+      connection.end();
     }
   }); // end then() Promise
 }; // end start()
@@ -172,6 +176,7 @@ var continueShopping = function() {
       buyProducts();
     } else {
       console.log('Thank you for your purchase!');
+      connection.end();
     }
   });
 };
